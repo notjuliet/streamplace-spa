@@ -55,7 +55,7 @@ export function Watch() {
       </div>
 
       {/* Chat sidebar */}
-      <div class="flex min-h-0 w-full flex-col lg:w-105">
+      <div class="flex min-h-0 w-full flex-1 flex-col lg:w-105 lg:flex-none">
         <Chat
           class="flex-1"
           handle={params.handle}
