@@ -94,14 +94,20 @@ export function VideoPlayer(props: VideoPlayerProps) {
     }
   };
 
+  const resumeOnPause = () => {
+    if (status() === "live") videoEl.play().catch(() => {});
+  };
+
   onMount(() => {
     videoEl.muted = true;
     connect();
+    videoEl.addEventListener("pause", resumeOnPause);
   });
 
   onCleanup(() => {
     disconnect();
     clearTimeout(controlsTimer);
+    videoEl.removeEventListener("pause", resumeOnPause);
   });
 
   return (
