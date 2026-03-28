@@ -17,6 +17,7 @@ export function VideoPlayer(props: VideoPlayerProps) {
   const [muted, setMuted] = createSignal(true);
   const [volume, setVolume] = createSignal(1);
   const [showControls, setShowControls] = createSignal(false);
+  const [isFullscreen, setIsFullscreen] = createSignal(false);
   let controlsTimer: ReturnType<typeof setTimeout> | undefined;
   let pollTimer: ReturnType<typeof setInterval> | undefined;
 
@@ -100,9 +101,14 @@ export function VideoPlayer(props: VideoPlayerProps) {
     if (status() === "live") videoEl.play().catch(() => {});
   };
 
+  const onFullscreenChange = () => {
+    setIsFullscreen(!!document.fullscreenElement);
+  };
+
   onMount(() => {
     videoEl.muted = true;
     videoEl.addEventListener("pause", resumeOnPause);
+    document.addEventListener("fullscreenchange", onFullscreenChange);
     poll();
     pollTimer = setInterval(poll, 10_000);
   });
@@ -112,12 +118,15 @@ export function VideoPlayer(props: VideoPlayerProps) {
     clearInterval(pollTimer);
     clearTimeout(controlsTimer);
     videoEl.removeEventListener("pause", resumeOnPause);
+    document.removeEventListener("fullscreenchange", onFullscreenChange);
   });
 
   return (
     <div
       ref={containerEl}
-      class="group/player relative w-full overflow-hidden bg-black"
+      class="relative w-full overflow-hidden bg-black"
+      style={{ cursor: isFullscreen() && !showControls() ? "none" : "auto" }}
+      onMouseMove={flashControls}
       onTouchEnd={flashControls}
     >
       <video ref={videoEl} class="aspect-video w-full" playsinline autoplay />
@@ -139,7 +148,7 @@ export function VideoPlayer(props: VideoPlayerProps) {
 
       {/* Controls */}
       <div
-        class={`absolute right-0 bottom-0 left-0 flex items-center gap-2 bg-black/60 p-3 transition-opacity group-hover/player:opacity-100 ${showControls() ? "opacity-100" : "opacity-0"}`}
+        class={`absolute right-0 bottom-0 left-0 flex items-center gap-2 bg-black/60 p-3 transition-opacity ${showControls() ? "opacity-100" : "opacity-0"}`}
       >
         <Show when={status() === "live"}>
           <span class="bg-sp-accent mr-1 flex items-center gap-1.5 rounded-sm px-1.5 py-0.5 text-xs font-medium text-black">
