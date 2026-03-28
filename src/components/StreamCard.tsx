@@ -21,7 +21,7 @@ export function StreamCard(props: StreamCardProps) {
       href={`/${props.handle}`}
       class="group border-sp-border bg-sp-surface hover:border-sp-accent overflow-hidden rounded-lg border transition-colors"
     >
-      <div class="bg-sp-bg aspect-video w-full overflow-hidden">
+      <div class="bg-sp-bg relative aspect-video w-full overflow-hidden">
         {thumbUrl() ? (
           <img src={thumbUrl()} alt="" class="h-full w-full object-cover" loading="lazy" />
         ) : (
@@ -29,6 +29,13 @@ export function StreamCard(props: StreamCardProps) {
             <span class="text-3xl">&#9654;</span>
           </div>
         )}
+        <div class="absolute bottom-3 left-3 flex items-center gap-1.5 rounded bg-black/70 px-2 py-1 text-xs text-white backdrop-blur-sm">
+          <span
+            class="bg-sp-accent inline-block h-2 w-2 rounded-full"
+            style={{ animation: "pulse-live 3s ease-in-out infinite" }}
+          />
+          {props.viewerCount}
+        </div>
       </div>
       <div class="group-hover:bg-sp-accent/10 flex gap-3 p-3 transition-colors">
         {props.avatarUrl ? (
@@ -39,13 +46,6 @@ export function StreamCard(props: StreamCardProps) {
         <div class="min-w-0 flex-1">
           <div class="truncate text-sm font-medium">{props.title}</div>
           <div class="text-sp-dim truncate text-xs">@{props.handle}</div>
-          <div class="text-sp-dim mt-1 flex items-center gap-1.5 text-xs">
-            <span
-              class="bg-sp-accent inline-block h-2 w-2 rounded-full"
-              style={{ animation: "pulse-live 3s ease-in-out infinite" }}
-            />
-            {props.viewerCount} watching
-          </div>
         </div>
       </div>
     </A>
