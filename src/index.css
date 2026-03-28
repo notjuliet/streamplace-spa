@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", sans-serif;
+
+  --color-sp-bg: #131316;
+  --color-sp-surface: #1c1c20;
+  --color-sp-border: #222228;
+  --color-sp-text: #f0f0f4;
+  --color-sp-dim: #8a8a96;
+  --color-sp-accent: #c4b5fd;
+  --color-sp-accent-dim: #c4b5fd15;
+  --color-sp-red: #f87171;
+  --color-sp-red-dim: #f8717118;
+  --color-sp-hover: #242428;
+}
+
+html {
+  scrollbar-gutter: stable both-edges;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-sp-border) transparent;
+}
+
+@keyframes pulse-live {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}

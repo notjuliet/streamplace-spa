@@ -1,0 +1,35 @@
+{
+  "name": "streamplace-frontend",
+  "private": true,
+  "license": "0BSD",
+  "type": "module",
+  "scripts": {
+    "predev": "node scripts/generate-metadata.js",
+    "dev": "vite",
+    "prebuild": "node scripts/generate-metadata.js",
+    "build": "vite build",
+    "serve": "vite preview",
+    "format": "oxfmt ."
+  },
+  "dependencies": {
+    "@atcute/atproto": "^3.1.10",
+    "@atcute/client": "^4.2.1",
+    "@atcute/identity": "^1.1.4",
+    "@atcute/identity-resolver": "^1.2.2",
+    "@atcute/lexicons": "^1.2.9",
+    "@atcute/oauth-browser-client": "^3.0.0",
+    "@solidjs/router": "^0.16.1",
+    "lucide-solid": "^1.7.0",
+    "solid-js": "^1.9.11"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/node": "^25.5.0",
+    "oxfmt": "^0.42.0",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.1",
+    "vite-plugin-solid": "^2.11.11"
+  },
+  "packageManager": "pnpm@10.32.1"
+}
