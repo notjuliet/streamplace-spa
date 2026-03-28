@@ -85,7 +85,7 @@ export function LoginButton() {
           </>
         }
       >
-        <span class="text-sp-dim text-sm">@{loggedInHandle() || "..."}</span>
+        <span class="text-sp-dim hidden text-sm sm:inline">@{loggedInHandle() || "..."}</span>
         <button
           class="border-sp-border text-sp-dim hover:border-sp-red hover:text-sp-red rounded-sm border px-3 py-1.5 text-sm transition-colors"
           onClick={() => signOut()}
