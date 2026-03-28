@@ -22,7 +22,7 @@ export interface ChatProps {
   class?: string;
 }
 
-const MAX_MESSAGES = 500;
+const MAX_MESSAGES = 200;
 
 function getAuthorColor(msg: ChatMessage): string {
   const color = msg.chatProfile?.color;
@@ -114,8 +114,16 @@ export function Chat(props: ChatProps) {
 
   const addMessage = (msg: ChatMessage) => {
     setMessages((prev) => {
-      // Insert sorted by indexedAt to handle backfill arriving in reverse order
       const msgTime = new Date(msg.indexedAt).getTime();
+      const lastTime = prev.length > 0 ? new Date(prev[prev.length - 1].indexedAt).getTime() : 0;
+
+      // Fast path: message is newest (common case for live messages)
+      if (msgTime >= lastTime) {
+        const next = prev.length >= MAX_MESSAGES ? [...prev.slice(1), msg] : [...prev, msg];
+        return next;
+      }
+
+      // Slow path: backfill arriving out of order
       let i = prev.length;
       while (i > 0 && new Date(prev[i - 1].indexedAt).getTime() > msgTime) {
         i--;
