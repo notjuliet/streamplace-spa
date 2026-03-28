@@ -1,6 +1,7 @@
 import { Maximize, Volume2, VolumeOff } from "lucide-solid";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 
+import { fetchLiveUsers } from "../lib/api";
 import { connectWhep, type WhepConnection } from "../lib/whep";
 
 export interface VideoPlayerProps {
@@ -12,12 +13,12 @@ export function VideoPlayer(props: VideoPlayerProps) {
   let containerEl!: HTMLDivElement;
   let connection: WhepConnection | undefined;
 
-  const [status, setStatus] = createSignal<"connecting" | "live" | "error" | "idle">("idle");
+  const [status, setStatus] = createSignal<"connecting" | "live" | "offline">("connecting");
   const [muted, setMuted] = createSignal(true);
   const [volume, setVolume] = createSignal(1);
-  const [errorMsg, setErrorMsg] = createSignal("");
   const [showControls, setShowControls] = createSignal(false);
   let controlsTimer: ReturnType<typeof setTimeout> | undefined;
+  let pollTimer: ReturnType<typeof setInterval> | undefined;
 
   const flashControls = () => {
     setShowControls(true);
@@ -26,9 +27,6 @@ export function VideoPlayer(props: VideoPlayerProps) {
   };
 
   const connect = async () => {
-    setStatus("connecting");
-    setErrorMsg("");
-
     try {
       connection = await connectWhep(props.handle);
 
@@ -36,24 +34,13 @@ export function VideoPlayer(props: VideoPlayerProps) {
         const state = connection!.pc.iceConnectionState;
         if (state === "connected" || state === "completed") {
           setStatus("live");
-        } else if (state === "failed" || state === "disconnected") {
-          setStatus("error");
-          setErrorMsg("Connection lost");
-        }
-      };
-
-      connection.pc.onconnectionstatechange = () => {
-        if (connection!.pc.connectionState === "failed") {
-          setStatus("error");
-          setErrorMsg("Connection failed");
         }
       };
 
       videoEl.srcObject = connection.stream;
       videoEl.play().catch(() => {});
-    } catch (err) {
-      setStatus("error");
-      setErrorMsg(err instanceof Error ? err.message : "Failed to connect");
+    } catch {
+      // poll will handle showing offline
     }
   };
 
@@ -63,7 +50,22 @@ export function VideoPlayer(props: VideoPlayerProps) {
       connection = undefined;
     }
     videoEl.srcObject = null;
-    setStatus("idle");
+  };
+
+  const poll = async () => {
+    try {
+      const liveUsers = await fetchLiveUsers();
+      const isLive = liveUsers.some((u) => u.handle === props.handle);
+      if (isLive && !connection) {
+        setStatus("connecting");
+        connect();
+      } else if (!isLive && status() !== "offline") {
+        disconnect();
+        setStatus("offline");
+      }
+    } catch {
+      // ignore, try again next poll
+    }
   };
 
   const toggleMute = () => {
@@ -100,12 +102,14 @@ export function VideoPlayer(props: VideoPlayerProps) {
 
   onMount(() => {
     videoEl.muted = true;
-    connect();
     videoEl.addEventListener("pause", resumeOnPause);
+    poll();
+    pollTimer = setInterval(poll, 10_000);
   });
 
   onCleanup(() => {
     disconnect();
+    clearInterval(pollTimer);
     clearTimeout(controlsTimer);
     videoEl.removeEventListener("pause", resumeOnPause);
   });
@@ -127,18 +131,7 @@ export function VideoPlayer(props: VideoPlayerProps) {
               Connecting...
             </div>
           </Show>
-          <Show when={status() === "error"}>
-            <div class="text-center">
-              <div class="text-sp-red">{errorMsg() || "Error"}</div>
-              <button
-                class="bg-sp-surface text-sp-text hover:bg-sp-border mt-2 rounded-sm px-3 py-1.5 text-sm transition-colors"
-                onClick={connect}
-              >
-                Retry
-              </button>
-            </div>
-          </Show>
-          <Show when={status() === "idle"}>
+          <Show when={status() === "offline"}>
             <div class="text-sp-dim">Stream offline</div>
           </Show>
         </div>

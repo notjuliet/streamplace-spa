@@ -41,7 +41,7 @@ export function LoginButton() {
         fallback={
           <>
             <button
-              class="bg-sp-accent text-sp-bg hover:bg-sp-accent/80 rounded-sm px-3 py-1.5 text-sm font-medium transition-colors"
+              class="bg-sp-accent text-sp-bg hover:bg-sp-accent/80 rounded-sm border border-transparent px-3 py-1.5 text-sm font-medium transition-colors"
               onClick={() => setShowLoginModal(true)}
             >
               Sign in
