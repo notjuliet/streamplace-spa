@@ -87,8 +87,10 @@ export function VideoPlayer(props: VideoPlayerProps) {
   const toggleFullscreen = () => {
     if (document.fullscreenElement) {
       document.exitFullscreen();
-    } else {
+    } else if (containerEl.requestFullscreen) {
       containerEl.requestFullscreen().catch(() => {});
+    } else if ((videoEl as any).webkitEnterFullscreen) {
+      (videoEl as any).webkitEnterFullscreen();
     }
   };
 
@@ -160,7 +162,7 @@ export function VideoPlayer(props: VideoPlayerProps) {
           step="0.01"
           value={muted() ? 0 : volume()}
           onInput={(e) => handleVolume(parseFloat(e.currentTarget.value))}
-          class="h-1 w-20 cursor-pointer appearance-none rounded-full bg-white/30 accent-white"
+          class="h-1 w-20 appearance-none rounded-full bg-white/30 accent-white"
         />
         <button
           class="rounded-sm p-1.5 text-white/70 transition-colors hover:text-white"
