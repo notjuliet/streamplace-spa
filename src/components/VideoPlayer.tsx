@@ -16,6 +16,14 @@ export function VideoPlayer(props: VideoPlayerProps) {
   const [muted, setMuted] = createSignal(true);
   const [volume, setVolume] = createSignal(1);
   const [errorMsg, setErrorMsg] = createSignal("");
+  const [showControls, setShowControls] = createSignal(false);
+  let controlsTimer: ReturnType<typeof setTimeout> | undefined;
+
+  const flashControls = () => {
+    setShowControls(true);
+    clearTimeout(controlsTimer);
+    controlsTimer = setTimeout(() => setShowControls(false), 3000);
+  };
 
   const connect = async () => {
     setStatus("connecting");
@@ -91,10 +99,15 @@ export function VideoPlayer(props: VideoPlayerProps) {
 
   onCleanup(() => {
     disconnect();
+    clearTimeout(controlsTimer);
   });
 
   return (
-    <div ref={containerEl} class="group/player relative w-full overflow-hidden bg-black">
+    <div
+      ref={containerEl}
+      class="group/player relative w-full overflow-hidden bg-black"
+      onTouchEnd={flashControls}
+    >
       <video ref={videoEl} class="aspect-video w-full" playsinline autoplay />
 
       {/* Status overlay */}
@@ -124,7 +137,9 @@ export function VideoPlayer(props: VideoPlayerProps) {
       </Show>
 
       {/* Controls */}
-      <div class="absolute right-0 bottom-0 left-0 flex items-center gap-2 bg-black/60 p-3 opacity-0 transition-opacity group-hover/player:opacity-100">
+      <div
+        class={`absolute right-0 bottom-0 left-0 flex items-center gap-2 bg-black/60 p-3 transition-opacity group-hover/player:opacity-100 ${showControls() ? "opacity-100" : "opacity-0"}`}
+      >
         <Show when={status() === "live"}>
           <span class="bg-sp-accent mr-1 flex items-center gap-1.5 rounded-sm px-1.5 py-0.5 text-xs font-medium text-black">
             LIVE
