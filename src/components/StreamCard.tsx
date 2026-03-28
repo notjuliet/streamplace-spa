@@ -1,4 +1,5 @@
 import { A } from "@solidjs/router";
+import { createSignal, onCleanup } from "solid-js";
 
 export interface StreamCardProps {
   handle: string;
@@ -9,12 +10,13 @@ export interface StreamCardProps {
   thumbRef?: string;
 }
 
-function getThumbnailUrl(handle: string): string {
-  return `https://stream.place/api/playback/${encodeURIComponent(handle)}/stream.jpg?ts=${Date.now()}`;
-}
-
 export function StreamCard(props: StreamCardProps) {
-  const thumbUrl = () => getThumbnailUrl(props.handle);
+  const [ts, setTs] = createSignal(Date.now());
+  const interval = setInterval(() => setTs(Date.now()), 15_000);
+  onCleanup(() => clearInterval(interval));
+
+  const thumbUrl = () =>
+    `https://stream.place/api/playback/${encodeURIComponent(props.handle)}/stream.jpg?ts=${ts()}`;
 
   return (
     <A
@@ -25,8 +27,8 @@ export function StreamCard(props: StreamCardProps) {
         {thumbUrl() ? (
           <img src={thumbUrl()} alt="" class="h-full w-full object-cover" loading="lazy" />
         ) : (
-          <div class="text-sp-dim flex h-full items-center justify-center">
-            <span class="text-3xl">&#9654;</span>
+          <div class="flex h-full items-center justify-center">
+            <img src="/favicon.svg" alt="" class="h-10 w-10 opacity-50" />
           </div>
         )}
         <div class="absolute bottom-3 left-3 flex items-center gap-1.5 rounded bg-black/70 px-2 py-1 text-xs text-white backdrop-blur-sm">
