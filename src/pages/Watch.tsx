@@ -1,5 +1,5 @@
 import { useParams } from "@solidjs/router";
-import { createResource, createSignal, Show } from "solid-js";
+import { createEffect, createResource, createSignal, onCleanup, Show } from "solid-js";
 
 import { Chat } from "../components/Chat";
 import { VideoPlayer } from "../components/VideoPlayer";
@@ -20,6 +20,13 @@ export function Watch() {
       }
     },
   );
+
+  createEffect(() => {
+    document.title = `@${params.handle} - streamplace`;
+    onCleanup(() => {
+      document.title = "streamplace";
+    });
+  });
 
   const [streamInfo, setStreamInfo] = createSignal<StreamInfo | undefined>();
   const [viewerCount, setViewerCount] = createSignal(0);
