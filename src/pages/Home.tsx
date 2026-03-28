@@ -69,7 +69,7 @@ export function Home() {
       <Show
         when={!state.loading}
         fallback={
-          <div class="text-sp-dim flex items-center gap-2">
+          <div class="text-sp-dim flex h-64 items-center justify-center gap-2">
             <div class="border-sp-dim border-t-sp-accent h-4 w-4 animate-spin rounded-full border-2" />
             Loading streams...
           </div>

@@ -213,9 +213,11 @@ export function Chat(props: ChatProps) {
         <Show
           when={messages().length > 0}
           fallback={
-            <div class="text-sp-dim flex h-full items-center justify-center text-sm">
-              {connected() ? "Waiting for messages..." : "Connecting..."}
-            </div>
+            <Show when={!connected()}>
+              <div class="text-sp-dim flex h-full items-center justify-center text-sm">
+                Connecting...
+              </div>
+            </Show>
           }
         >
           <div class="space-y-1">
