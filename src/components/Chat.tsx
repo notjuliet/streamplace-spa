@@ -1,4 +1,4 @@
-import { Camera, CornerDownRight, Reply, Sword, Star, X } from "lucide-solid";
+import { CornerDownRight, Reply, Sword, Star, Video, X } from "lucide-solid";
 import { createSignal, For, onCleanup, onMount, Show } from "solid-js";
 
 import { setShowLoginModal } from "../auth/login-modal";
@@ -50,7 +50,7 @@ function ChatBadges(props: { badges?: ChatMessage["badges"] }) {
           if (type === "place.stream.badge.defs#streamer") {
             return (
               <span class="mr-0.5 inline-flex align-middle" title="Streamer">
-                <Camera size={12} class="text-sp-red" />
+                <Video size={12} class="text-sp-red" />
               </span>
             );
           }
@@ -224,14 +224,14 @@ export function Chat(props: ChatProps) {
                 <div class="group/msg hover:bg-sp-hover relative px-3 text-sm leading-relaxed">
                   <Show when={agent()}>
                     <button
-                      class="text-sp-dim hover:text-sp-accent absolute top-0 right-0 hidden rounded p-0.5 transition-colors group-hover/msg:inline-flex"
+                      class="text-sp-dim hover:text-sp-accent bg-sp-bg border-sp-border absolute -top-3 right-1 hidden rounded border p-1 shadow-sm transition-colors group-hover/msg:inline-flex"
                       title="Reply"
                       onClick={() => {
                         setReplyingTo(msg);
                         inputEl?.focus();
                       }}
                     >
-                      <Reply size={14} />
+                      <Reply size={16} />
                     </button>
                   </Show>
                   <Show when={msg.replyTo}>
