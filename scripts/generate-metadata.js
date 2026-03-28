@@ -15,7 +15,8 @@ const metadata = {
   client_uri: baseUrl,
   logo_uri: `${baseUrl}/favicon.ico`,
   redirect_uris: [`${baseUrl}/`],
-  scope: "atproto include:place.stream.authFull",
+  // NOTE: include:place.stream.authFull doesnt work on some PDSes and is unnecessary here
+  scope: "atproto repo?collection=place.stream.chat.message",
   grant_types: ["authorization_code", "refresh_token"],
   response_types: ["code"],
   token_endpoint_auth_method: "none",
