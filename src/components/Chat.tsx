@@ -105,6 +105,7 @@ export function Chat(props: ChatProps) {
   let messagesEl!: HTMLDivElement;
   let ws: ChatConnection | undefined;
   let following = true;
+  let seenMessages = new Set<string>();
 
   const [messages, setMessages] = createSignal<ChatMessage[]>([]);
   const [connected, setConnected] = createSignal(false);
@@ -114,14 +115,21 @@ export function Chat(props: ChatProps) {
   let inputEl!: HTMLInputElement;
 
   const addMessage = (msg: ChatMessage) => {
+    if (seenMessages.has(msg.cid)) return;
+    seenMessages.add(msg.cid);
+
     setMessages((prev) => {
       const msgTime = new Date(msg.indexedAt).getTime();
       const lastTime = prev.length > 0 ? new Date(prev[prev.length - 1].indexedAt).getTime() : 0;
 
       // Fast path: message is newest (common case for live messages)
       if (msgTime >= lastTime) {
-        const next = prev.length >= MAX_MESSAGES ? [...prev.slice(1), msg] : [...prev, msg];
-        return next;
+        if (prev.length >= MAX_MESSAGES) {
+          seenMessages.delete(prev[0].cid);
+          return [...prev.slice(1), msg];
+        }
+
+        return [...prev, msg];
       }
 
       // Slow path: backfill arriving out of order
@@ -130,7 +138,10 @@ export function Chat(props: ChatProps) {
         i--;
       }
       const next = [...prev.slice(0, i), msg, ...prev.slice(i)];
-      if (next.length > MAX_MESSAGES) return next.slice(next.length - MAX_MESSAGES);
+      if (next.length > MAX_MESSAGES) {
+        seenMessages.delete(next[0].cid);
+        return next.slice(1);
+      }
       return next;
     });
 
