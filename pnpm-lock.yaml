@@ -54,6 +54,9 @@ importers:
       vite:
         specifier: ^8.0.1
         version: 8.0.3(@types/node@25.5.0)(jiti@2.6.1)
+      vite-plugin-lucide-preprocess:
+        specifier: ^1.4.8
+        version: 1.4.8(vite@8.0.3(@types/node@25.5.0)(jiti@2.6.1))
       vite-plugin-solid:
         specifier: ^2.11.11
         version: 2.11.11(solid-js@1.9.12)(vite@8.0.3(@types/node@25.5.0)(jiti@2.6.1))
@@ -856,6 +859,18 @@ packages:
     peerDependencies:
       browserslist: '>= 4.21.0'
 
+  vite-plugin-lucide-preprocess@1.4.8:
+    resolution: {integrity: sha512-wIQ1fchys+WD/brwNjJTpy+GoHysPRDI7PFl4Qb6WNleifeC0fHGISMoyXdCjlcbx9wMMWOCPsZOygtk09mMfw==}
+    peerDependencies:
+      rolldown: '>=0.1'
+      rollup: '>=1'
+      vite: '>=2'
+    peerDependenciesMeta:
+      rolldown:
+        optional: true
+      rollup:
+        optional: true
+
   vite-plugin-solid@2.11.11:
     resolution: {integrity: sha512-YMZCXsLw9kyuvQFEdwLP27fuTQJLmjNoHy90AOJnbRuJ6DwShUxKFo38gdFrWn9v11hnGicKCZEaeI/TFs6JKw==}
     peerDependencies:
@@ -1617,6 +1632,11 @@ snapshots:
       browserslist: 4.28.1
       escalade: 3.2.0
       picocolors: 1.1.1
+
+  vite-plugin-lucide-preprocess@1.4.8(vite@8.0.3(@types/node@25.5.0)(jiti@2.6.1)):
+    dependencies:
+      magic-string: 0.30.21
+      vite: 8.0.3(@types/node@25.5.0)(jiti@2.6.1)
 
   vite-plugin-solid@2.11.11(solid-js@1.9.12)(vite@8.0.3(@types/node@25.5.0)(jiti@2.6.1)):
     dependencies:

@@ -1,5 +1,6 @@
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
+import lucidePreprocess from "vite-plugin-lucide-preprocess";
 import solidPlugin from "vite-plugin-solid";
 
 import metadata from "./public/oauth-client-metadata.json";
@@ -9,6 +10,7 @@ const SERVER_PORT = 5173;
 
 export default defineConfig({
   plugins: [
+    lucidePreprocess(),
     tailwindcss(),
     solidPlugin(),
     {
