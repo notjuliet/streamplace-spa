@@ -104,6 +104,7 @@ function FacetSegment(props: { text: string; facet?: Facet }) {
 export function Chat(props: ChatProps) {
   let messagesEl!: HTMLDivElement;
   let ws: ChatConnection | undefined;
+  let following = true;
 
   const [messages, setMessages] = createSignal<ChatMessage[]>([]);
   const [connected, setConnected] = createSignal(false);
@@ -135,7 +136,7 @@ export function Chat(props: ChatProps) {
 
     // auto-scroll to bottom
     requestAnimationFrame(() => {
-      if (messagesEl) {
+      if (messagesEl && following) {
         messagesEl.scrollTop = messagesEl.scrollHeight;
       }
     });
@@ -190,8 +191,25 @@ export function Chat(props: ChatProps) {
     }
   };
 
+  // keep chat pinned to bottom on new messages and resize, unless user has scrolled up
+  const setupScrollFollowing = () => {
+    const onScroll = () => {
+      following = messagesEl.scrollTop + messagesEl.clientHeight >= messagesEl.scrollHeight - 5;
+    };
+    messagesEl.addEventListener("scroll", onScroll, { passive: true });
+    const ro = new ResizeObserver(() => {
+      if (following) messagesEl.scrollTop = messagesEl.scrollHeight;
+    });
+    ro.observe(messagesEl);
+    onCleanup(() => {
+      messagesEl.removeEventListener("scroll", onScroll);
+      ro.disconnect();
+    });
+  };
+
   onMount(() => {
     connect();
+    setupScrollFollowing();
   });
 
   onCleanup(() => {
