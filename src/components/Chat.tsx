@@ -108,7 +108,7 @@ export function Chat(props: ChatProps) {
   const [messages, setMessages] = createSignal<ChatMessage[]>([]);
   const [connected, setConnected] = createSignal(false);
   const [inputText, setInputText] = createSignal("");
-  const [sending, setSending] = createSignal(false);
+
   const [replyingTo, setReplyingTo] = createSignal<ChatMessage | undefined>();
   let inputEl!: HTMLInputElement;
 
@@ -171,15 +171,12 @@ export function Chat(props: ChatProps) {
         }
       : undefined;
 
-    setSending(true);
+    setInputText("");
+    setReplyingTo(undefined);
     try {
       await sendChatMessage(currentAgent, did, streamerDid, text, resolveHandle, reply);
-      setInputText("");
-      setReplyingTo(undefined);
     } catch (err) {
       console.error("Failed to send chat:", err);
-    } finally {
-      setSending(false);
     }
   };
 
@@ -304,7 +301,7 @@ export function Chat(props: ChatProps) {
             value={inputText()}
             onInput={(e) => setInputText(e.currentTarget.value)}
             onKeyDown={handleKeyDown}
-            disabled={sending() || !props.streamerDid}
+            disabled={!props.streamerDid}
           />
         </div>
       </Show>
